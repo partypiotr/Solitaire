@@ -284,6 +284,7 @@ game = Tableau()
 while True:
     print("\033[H\033[J", end="")
     game.display()
+    print("\nOdrzucone: s | Podstawy: f | Stosy: 1-7 | Przenoszenie stosów kart: <stos źródłowy> <stos docelowy> <którą kartę od dołu podnieść>")
     move = input("Podaj ruch (lub 'q' aby wyjść): ").lower()
     try:
         if move == 'q':
@@ -297,9 +298,12 @@ while True:
             continue
         if move == "b" or move == "b ":
             if game.waste.cards:
-                game.move_card(game.waste, game.stock)
-                game.stock.cards[-1].face_up = False
-
+                temp_cards = []
+                while game.waste.cards:
+                    temp_cards.append(game.waste.cards.pop())
+                for card in temp_cards:
+                    game.stock.cards.append(card)
+                    card.face_up = False
             else:
                 print("Stos kart odrzuconych pusty!")
             continue
