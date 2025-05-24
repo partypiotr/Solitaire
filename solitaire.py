@@ -115,7 +115,10 @@ class Tableau:
                         rank_map = {1: 'A', 11: 'J', 12: 'Q', 13: 'K'}
                         rank_str = rank_map.get(card.rank, str(card.rank))
                         color_code = '\033[91m' if card.typ in ['♥', '♦'] else '\033[0m'
-                        line.append(f" {color_code}{card.typ}{rank_str} \033[0m")
+                        if rank_str == '10':
+                            line.append(f" \b{color_code}{card.typ}{rank_str} \033[0m")
+                        else:
+                            line.append(f" {color_code}{card.typ}{rank_str} \033[0m")
                 else:
                     line.append("  ")
             result.append(" ".join(f"{card:4}" for card in line))
@@ -215,7 +218,7 @@ class Tableau:
             # Obsługa przenoszenia na fundamenty (tylko pojedyncze karty)
             if dest.lower() == 'f':
                 source_pile = int(source) - 1
-                if 0 <= source_pile <= 6 and self.tableau_piles[source_pile].cards:
+                if 0 <= source_pile <= 7 and self.tableau_piles[source_pile].cards:
                     card = self.tableau_piles[source_pile].cards[-1]
                     if not card.face_up:
                         return False
@@ -275,7 +278,7 @@ class Tableau:
 
 print("Console Pasjans v0.1")
 print(
-    "Format ruchu: <źródło> <cel> (<którą kartę od dołu przenieść, przenosi to stos kart>) \n(np. '1 2' przenosi kartę ze stosu 1 na stos 2 albo 's 3' przenosi kartę na stosie dobierania na stos 3)\n lub next aby dobrać kartę ze stosu dobierania. przenoszenie na f przenosi kartę na odpowiednią podstawę")
+    "Format ruchu: <źródło> <cel> (<którą kartę od dołu przenieść, przenosi to stos kart>) \n(np. '1 2' przenosi kartę ze stosu 1 na stos 2 albo 's 3' przenosi kartę na stosie dobierania na stos 3)\n lub n aby dobrać kartę ze stosu dobierania, b to odwrotność komendy n. przenoszenie na f przenosi kartę na odpowiednią podstawę")
 input("kliknij enter aby kontynuować")
 game = Tableau()
 while True:
@@ -285,14 +288,14 @@ while True:
     try:
         if move == 'q':
             break
-        if move == 'next' or move=='next ' :
+        if move == 'n' or move=='n ' :
             if game.stock.cards:
                 game.move_card(game.stock, game.waste)
                 game.waste.cards[-1].face_up = True
             else:
                 print("Stos dobierania pusty!")
             continue
-        if move == "back" or move == "back ":
+        if move == "b" or move == "b ":
             if game.waste.cards:
                 game.move_card(game.waste, game.stock)
                 game.stock.cards[-1].face_up = False
