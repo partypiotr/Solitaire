@@ -1,6 +1,6 @@
-from os.path import split
 
 
+#klasa karty, cała gra opiera się na tej klasie
 class Karta:
     def __init__(self, typ, rank, face_up, color):
         self.typ = typ
@@ -13,7 +13,7 @@ class Karta:
         rank_str = rank_map.get(self.rank, str(self.rank))
         return f"{self.typ}{rank_str}" if self.face_up else "XX"
 
-
+#talia kart, tak samo jak z klasą karta
 class Deck:
     def __init__(self):
         self.cards = []
@@ -38,7 +38,7 @@ class Deck:
             return self.cards.pop()
         return None
 
-
+#stos kart, odpowiada za stosy na stole
 class Pile:
     def __init__(self):
         self.cards = []
@@ -52,7 +52,7 @@ class Pile:
             return self.cards.pop()
         return None
 
-
+#stół, w nim jest wszystko
 class Tableau:
     def __init__(self):
         self.deck = Deck()
@@ -62,7 +62,7 @@ class Tableau:
         self.stock = Pile()
         self.waste = Pile()
         self.setup_tableau()
-
+    #ta funkcja przygotowuje stół, bardzo ważne
     def setup_tableau(self):
         for i in range(7):
             for j in range(i, 7):
@@ -74,7 +74,7 @@ class Tableau:
 
         while self.deck.cards:
             self.stock.add_card(self.deck.draw_card())
-
+    #te funcje chyba same w sobie mówią co robią
     def show_foundations(self):
         foundations = []
         for pile in self.foundation_piles:
@@ -200,7 +200,7 @@ class Tableau:
             from_pile.cards[-1].face_up = True
 
         return True
-
+    #to pythonowe arcydzieło sprawdza czy kartę da się przenieść, jak cokolwiek zoptymalizuję to wszystko się sypie
     def process_move(self, command):
         try:
             parts = command.split()
@@ -261,11 +261,12 @@ class Tableau:
         except Exception as e:
             print(f"Błąd: {e}")
             return False
-
+    #wyświetlanie stanu gry
     def display(self):
         print("\nPodstawy:", self.show_foundations())
         print("\n" + self.show_stock_waste())
         print("\nPlansza:")
+        print("\033[92m 1    2    3    4    5    6    7\033[0m")
         print(self.show_tableau_piles())
         print()
 
@@ -284,7 +285,7 @@ game = Tableau()
 while True:
     print("\033[H\033[J", end="")
     game.display()
-    print("\nOdrzucone: s | Podstawy: f | Stosy: 1-7 | Przenoszenie stosów kart: <stos źródłowy> <stos docelowy> <którą kartę od dołu podnieść>")
+    print("\nOdrzucone: s | Podstawy: f | Stosy: 1-7 \nPrzenoszenie stosów kart: <stos źródłowy> <stos docelowy> <którą kartę od dołu podnieść>")
     move = input("Podaj ruch (lub 'q' aby wyjść): ").lower()
     try:
         if move == 'q':
